@@ -1,0 +1,65 @@
+<%- include('base') %>
+
+<form id="imc">
+    <label for="name">Nome:</label>
+    <input type="text" id="name" name="name">
+    <label for="height">Altura em centímetros:</label>
+    <input type="" id="height" name="height" step="0.01">
+    <label for="weight">Peso em quilogramas:</label>
+    <input type="text" id="weight" name="weight">
+
+    <button type="submit">Enviar</button>
+</form>
+
+<script>
+    function calcIMC(height,weight){
+        let imc=weight/(height**2)
+        let classificacao=''
+
+        if (imc<16){
+            classificacao='baixo peso muito grave'
+        }
+        else if (imc<16.99){
+            classificacao='baixo peso grave'
+        }
+        else if (imc<18.49){
+            classificacao='baixo peso'
+        }
+        else if (imc<24.99){
+            classificacao='peso normal'
+        }
+        else if (imc<29.99){
+            classificacao='sobrepeso'
+        }
+        else if (imc<34.99){
+            classificacao='obesidade grau I'
+        }
+        else if (imc<39.99){
+            classificacao='obesidade grau II'
+        }
+        else {
+            classificacao='obesidade grau III'
+        }
+
+        return {imc: imc.toFixed(2), classificacao}
+    }
+    const form = document.getElementById('imc')
+    document.getElementById('imc').addEventListener('submit', function(event){
+
+        event.preventDefault()
+
+        const formData=new FormData(form)
+        const data = {}
+        formData.forEach((value, key) => {
+            data[key]=value
+        })
+
+        var userName=data.name
+        var userHeight=parseFloat(data.height)/100
+        var userWeight=parseFloat(data.weight)
+
+        let {imc, classificacao} = calcIMC(userHeight,userWeight)
+
+        alert(`${userName} possui um Indice de Massa Corporal igual a ${imc}, sendo classificado como ${classificacao}.`)
+    })
+</script>

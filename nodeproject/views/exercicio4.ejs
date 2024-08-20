@@ -1,0 +1,78 @@
+<%- include('base') %>
+
+<form id="entregas">
+    <div id="inputDiv">
+        <div class="form-group">
+            <label for="pecas">Total de peças:</label>
+            <input type="number" id="pecas" name="pecas" min="1" value="1" required>
+            <br><br>
+
+            <label for="rastrear">Deseja rastrear essa entrega?</label><br>
+                <input type="radio" id="sim" name="rastrear" value="200" required>
+                <label for="sim">Sim</label>
+                <input type="radio" id="nao" name="rastrear" value="0" required>
+                <label for="nao">Não</label>
+            <br><br>
+            
+            <label for="region">Selecione a região da entrega:</label><br>
+            <select id="region" name="region">
+                <option value="1">Sudeste</option>
+                <option value="2">Sul</option>
+                <option value="3">Centro-Oeste</option>
+            </select>
+            <br><br>
+
+            <label for="distance">Distância em KM:</label>
+            <input type="number" id="distance" name="distance" min="1" value="1" required>
+            <br><br>
+        </div>
+    </div>
+    <button type="submit">Enviar</button>
+</form>
+<div id="results"></div>
+
+<script>
+    const regions = [
+        {region: 1, regionValues: {piece: 1.2, discount: 0.12}},
+        {region: 2, regionValues: {piece: 1.1, discount: 0.10}},
+        {region: 3, regionValues: {piece: 1.15, discount: 0.08}}
+    ]
+
+    const form=document.getElementById('entregas')
+    document.getElementById('entregas').addEventListener('submit', function(event){
+        event.preventDefault()
+
+        const formData = new FormData(form)
+        const data={}
+        formData.forEach((value,key) => {
+            if (key==='distance'){
+                data[key] = parseFloat(value)
+            } else {
+                data[key] = parseInt(value)
+            }
+        })
+        
+        const valorFrete = regions.find(element => element.region === data.region)
+        var fretePecas = 0
+        var freteCombustivel = data.distance * 5
+
+        if (data.pecas > 1000){
+            excesso = data.pecas - 1000
+            fretePecas = (1000 * valorFrete.regionValues.piece) + (excesso * (valorFrete.regionValues.piece * (1 - valorFrete.regionValues.discount)))
+        } else {
+            fretePecas = data.pecas * valorFrete.regionValues.piece
+        }
+
+        var freteTotal = fretePecas + freteCombustivel + data.rastrear
+
+        const result_container=document.getElementById('results')
+        const new_entry=document.createElement('div')
+        new_entry.className='entry'
+        new_entry.innerHTML = `<br>Frete total: R$${freteTotal.toFixed(2)}<br>Incluindo:<br>
+                               Valor do Combustível: R$${freteCombustivel.toFixed(2)}<br>
+                               Valor total por Peça: R$${fretePecas.toFixed(2)}<br>
+                               Valor do Rastreamento: R$${data.rastrear.toFixed(2)}`
+
+        result_container.appendChild(new_entry)
+    })
+</script>

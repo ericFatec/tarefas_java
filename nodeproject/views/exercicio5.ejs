@@ -1,0 +1,109 @@
+<%- include('base') %>
+
+<form id="info">
+    <div id="inputDiv">
+        <div class="form-group">
+            <label for="codigo">Código do Funcionário:</label>
+            <input type="number" id="codigo" name="codigo" min="0" value="0" required>
+            <br><br>
+
+            <label for="horas">Horas Trabalhadas:</label>
+            <input type="number" id="horas" name="horas" min="0" value="0" required>
+            <br><br>
+
+            <label for="turno">Turno do Funcionário</label><br>
+                <input type="radio" id="matutino" name="turno" value="m" required>
+                <label for="matutino">Matutino</label>
+                <input type="radio" id="vespertino" name="turno" value="v" required>
+                <label for="vespertino">Vespertino</label>
+                <input type="radio" id="noturno" name="turno" value="n" required>
+                <label for="noturno">Noturno</label>
+            <br><br>
+            
+            <label for="categoria">Categoria do Funcionário:</label><br>
+            <select id="categoria" name="categoria">
+                <option value="funcionario">Funcionário</option>
+                <option value="gerente">Gerente</option>
+            </select>
+            <br><br>
+
+            <label for="minimo">Valor do Salário Mínimo:</label>
+            <input type="number" id="minimo" name="minimo" min="0.00" value="0.00" required>
+            <br><br>
+        </div>
+    </div>
+    <button type="submit">Enviar</button>
+    <button type="button" onclick="verificarPagamentos()">Calcular total de Pagamentos</button>
+</form>
+<div id="results"></div>
+
+<script>
+    const salarioCalc = [
+        {turno: "m", valorHora: {gerente: 0.2, funcionario: 0.1}},
+        {turno: "v", valorHora: {gerente: 0.25, funcionario: 0.12}},
+        {turno: "n", valorHora: {gerente: 0.3, funcionario: 0.15}},
+    ]
+    const valeAlimentacao = [
+        {salarioInicial: 1200, auxilio: 0.15},
+        {salarioInicial: 800, auxilio: 0.20},
+        {salarioInicial: 0, auxilio: 0.25},
+    ]
+    const funcionarios = {}
+
+    function verificarPagamentos(){
+        let totalPagar = 0
+
+        for (codigo in funcionarios){
+            totalPagar += funcionarios[codigo].salarioFinal
+        }
+
+        alert(`Total à Pagar: ${totalPagar}`)
+    }
+
+    const form = document.getElementById('info')
+    document.getElementById('info').addEventListener('submit', function(event) {
+        event.preventDefault()
+        const formData = new FormData(form)
+        const data = {}
+
+        formData.forEach((value, key) => {
+            data[key] = value
+        })
+
+        if (funcionarios[data.codigo]) {
+            alert('Funcionário já existe!')
+            return
+        }
+
+        const turnoValores = salarioCalc.find(element => element.turno === data.turno)
+        const valorHora = turnoValores.valorHora[data.categoria]
+
+        const valorHoraFinal = data.minimo * valorHora
+        const salarioInicial = valorHoraFinal * data.horas
+
+        const foundItem = valeAlimentacao.find(item => salarioInicial > item.salarioInicial);
+        const auxilio = foundItem ? foundItem.auxilio : 0
+
+        const salarioFinal = salarioInicial + salarioInicial * auxilio
+
+        const result_container=document.getElementById('results')
+        const new_entry=document.createElement('div')
+        new_entry.className='entry'
+        new_entry.innerHTML = `<br>Código do Funcionário: ${data.codigo}
+                               <br>Número de Horas Trabalhadas: ${data.horas}
+                               <br>Valor Hora: ${valorHoraFinal}
+                               <br>Salário Inicial: ${salarioInicial}
+                               <br>Auxílio Alimentação: ${salarioInicial*auxilio}
+                               <br>Salário Final: ${salarioFinal}`
+
+        result_container.appendChild(new_entry)
+
+        funcionarios[data.codigo] = {
+            horas: data.horas,
+            valorHora: valorHoraFinal,
+            salarioInicial: salarioInicial,
+            auxilio: salarioInicial*auxilio,
+            salarioFinal: salarioFinal
+        }
+    })
+</script>

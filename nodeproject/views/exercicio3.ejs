@@ -1,0 +1,103 @@
+<%- include('base') %>
+
+<form id="media">
+    <div id="inputDiv">
+        <div class="form-group">
+            <label for="nota1">Nota 1:</label>
+            <input type="number" id="nota1" name="nota1" min="0" max="10" value="0" required>
+            <label for="peso1">Peso 1:</label>
+            <input type="number" id="peso1" name="peso1" min="1" value="1" required><br><br>
+        </div>
+    </div>
+    <button type="button" onclick="addInput()">Nova nota</button>
+    <button type="button" onclick="submitForm()">Enviar</button>
+</form>
+
+<div id="results"></div>
+
+<script>
+    const classificacoes = [
+        { classificacao: 'F', grade: 5 },
+        { classificacao: 'E', grade: 6 },
+        { classificacao: 'D', grade: 7 },
+        { classificacao: 'C', grade: 8 },
+        { classificacao: 'B', grade: 9 },
+        { classificacao: 'A', grade: 10 },
+    ];
+
+    function Classificar(mediaTotal){
+        const classificacao = classificacoes.find(({grade}) => mediaTotal <= grade)
+
+        return classificacao ? classificacao.classificacao : 'Inválido'
+    }
+
+    let inputCount=1
+    function addInput(){
+        inputCount++
+
+        const inputDiv = document.getElementById("inputDiv")
+        const newDiv = document.createElement("div")
+        newDiv.className = "form-group"
+        newDiv.innerHTML=`
+            <label for="nota${inputCount}">Nota ${inputCount}:</label>
+            <input type="number" id="nota${inputCount}" name="nota${inputCount}" min="0" max="10" value="0" required>
+            <label for="peso${inputCount}">Peso ${inputCount}:</label>
+            <input type="number" id="peso${inputCount}" name="peso${inputCount}" min="1" value="1" required><br><br>
+        `
+        inputDiv.appendChild(newDiv)
+    }
+
+    function submitForm(){
+        const form=document.getElementById("media")
+        const formData = new FormData(form)
+
+        const notas = []
+        const pesos = []
+
+        
+        formData.forEach((value, key) => {
+            if(key.match(/nota/)){
+                valor=parseFloat(value)
+                if (valor<0 || valor>10){
+                    alert(`Valor da ${key} é inválido!`)
+                    return
+                }
+                notas.push(valor)
+            } else {
+                valor=parseInt(value)
+                if (valor!=value || value<0){
+                    alert(`Valor do ${key} é inválido!`)
+                    return
+                }
+                pesos.push(valor)
+            }
+        })
+
+        var mediaTotal = 0
+        var pesoTotal = 0
+        for (i=0; i<notas.length; i++){
+            mediaTotal += notas[i]*pesos[i]
+            pesoTotal += pesos[i]
+        }
+        
+        mediaFinal=mediaTotal/pesoTotal
+
+        const result_container=document.getElementById('results')
+        const new_entry=document.createElement('div')
+        new_entry.className='entry'
+        new_entry.textContent = `Com uma média de ${mediaFinal} você ficou com classificação ${Classificar(mediaFinal)}`
+
+        result_container.appendChild(new_entry)
+
+        form.reset()
+        document.getElementById("inputDiv").innerHTML = `
+            <div class="form-group">
+                <label for="nota1">Nota 1:</label>
+                <input type="number" id="nota1" name="nota1" min="0" max="10" value="0" required>
+                <label for="peso1">Peso 1:</label>
+                <input type="number" id="peso1" name="peso1" min="1" value="1" required><br><br>
+            </div>
+        `
+        inputCount=1
+    }
+</script>
