@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercicio 2</title>
+    <style>
+        #results {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        .entry {
+            margin-bottom: 10px;
+        }
+        .disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <form id="faixa_etaria">
+        <label for="name">Nome:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="age">Idade:</label>
+        <input type="" id="age" name="age" min="0" max="150" required>
+
+        <button type="submit" id="botao_enviar">Enviar</button>
+    </form>
+
+    <button id="stopButton">Encerrar</button>
+    <div id="results"></div>
+</body>
+<script>
+    const faixasLista = [
+        { categoria: 'criança', ageLimit: 14 },
+        { categoria: 'jovem', ageLimit: 29 },
+        { categoria: 'adulto', ageLimit: 59 },
+        { categoria: 'idoso', ageLimit: 150 }
+    ];
+    function achar_faixa_etaria(age) {
+        const categoria = faixasLista.find(({ageLimit}) => age <= ageLimit)
+    
+        return categoria ? categoria.categoria : 'inválido'
+    }
+    
+    let encerrar = false
+
+    const form=document.getElementById('faixa_etaria')
+    document.getElementById('faixa_etaria').addEventListener('submit', function(event) {
+        event.preventDefault()
+
+        const formData = new FormData(form)
+        const data={}
+        formData.forEach((value,key) => {
+            data[key] = value
+        })
+
+        if (isNaN(data.age) || data.age < 0 || data.age > 150) {
+            alert('Idade inválida!')
+            return
+        }
+
+        const result_container=document.getElementById('results')
+        const new_entry=document.createElement('div')
+        new_entry.className='entry'
+        new_entry.textContent = `${data.name} é um(a) ${achar_faixa_etaria(data.age)} de ${data.age} anos.`
+
+        result_container.appendChild(new_entry)
+    })
+    document.getElementById('stopButton').addEventListener('click', function() {
+        encerrar=true
+        document.getElementById('botao_enviar').disabled=true
+        document.getElementById('botao_enviar').classList.add('disabled')
+        alert('Formulário encerrado!')
+    })
+</script>
+</html>
