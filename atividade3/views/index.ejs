@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarefas</title>
+</head>
+<body>
+    <h1>Lista de Tarefas</h1>
+
+    <!-- Filter Links -->
+    <a href="/?status=true">Mostrar Completas</a> | 
+    <a href="/?status=false">Mostrar Incompletas</a> | 
+    <a href="/">Mostrar Todas</a>
+
+    <ul>
+        <% tarefas.forEach((tarefa, index) => { %>
+            <li>
+                <%= tarefa.descricao %> | 
+                <%= tarefa.ativo ? 'Completa' : 'Incompleta' %>
+                <form action="/tarefa/<%= index %>/editar" method="GET" style="display:inline;">
+                    <button type="submit">Editar</button>
+                </form> |
+                <form action="/tarefa/<%= index %>?_method=DELETE" method="POST" style="display:inline;">
+                    <button type="submit">Excluir</button>
+                </form>
+            </li>
+        <% }) %>
+    </ul>
+
+    <a href="/tarefa/novo">Adicionar Tarefa</a>
+</body>
+</html>

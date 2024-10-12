@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Tarefa</title>
+</head>
+<body>
+    <h1>Editar Tarefa</h1>
+
+    <% if (errorMessage) { %>
+        <p style="color: red;"><%= errorMessage %></p>
+    <% } %>
+
+    <form action="/tarefa/<%= id %>/editar" method="POST">
+        <label for="descricao">Descrição:</label>
+        <input type="text" id="descricao" name="tarefa[descricao]" value="<%= tarefa.descricao %>" required>
+
+        <label for="ativo">Status:</label>
+        <select id="ativo" name="tarefa[ativo]" required>
+            <option value="true" <%= tarefa.ativo ? 'selected' : '' %>>Completa</option>
+            <option value="false" <%= !tarefa.ativo ? 'selected' : '' %>>Incompleta</option>
+        </select>
+
+        <button type="submit">Salvar</button>
+    </form>
+    <a href="/">Voltar</a>
+</body>
+</html>

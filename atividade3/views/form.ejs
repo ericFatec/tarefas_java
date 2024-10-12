@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Tarefa</title>
+</head>
+<body>
+    <h1>Cadastrar nova Tarefa</h1>
+
+    <% if (errorMessage) { %>
+        <p style="color: red;"><%= errorMessage %></p>
+    <% } %>
+
+    <form action="/tarefa" method="post">
+        <label for="descricao">Descrição:</label>
+        <input type="text" id="descricao" name="tarefa[descricao]" value="<%= tarefa ? tarefa.descricao : '' %>" required>
+
+        <label for="ativo">Status:</label>
+        <select id="ativo" name="tarefa[ativo]" required>
+            <option value="true">Completa</option>
+            <option value="false" selected>Incompleta</option>
+        </select>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+    <a href="/">Voltar</a>
+</body>
+</html>
