@@ -27,6 +27,7 @@ app.get('/tarefa/novo', function(req, res) {
 });
 
 app.post('/tarefa', function(req, res) {
+  console.log(req.body)
   var descricao = req.body.tarefa.descricao;
 
   var existingTask = tarefas.find(tarefa => tarefa.descricao === descricao);
